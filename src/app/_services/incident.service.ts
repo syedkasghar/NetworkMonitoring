@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
-import { Device } from '../_models';
+import { Incident } from '../_models';
 
-const baseUrl = `${environment.apiUrl}/devices`;
+const baseUrl = `${environment.apiUrl}/incidents`;
 
 @Injectable({ providedIn: 'root' })
-export class DeviceService {
+export class IncidentService {
   constructor(private http: HttpClient) {}
 
   getAll() {
-    return this.http.get<Device[]>(baseUrl);
+    return this.http.get<Incident[]>(baseUrl);
   }
 
   getById(id: string) {
     console.log('here');
-    return this.http.get<Device>(`${baseUrl}/${id}`);
+    return this.http.get<Incident>(`${baseUrl}/${id}`);
   }
 
   create(params) {

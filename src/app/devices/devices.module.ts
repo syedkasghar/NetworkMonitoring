@@ -5,11 +5,11 @@ import { CommonModule } from '@angular/common';
 import { DevicesRoutingModule } from './devices-routing.module';
 import { LayoutComponent } from './layout.component';
 import { ListComponent } from './list.component';
-//import { AddEditComponent } from './add-edit.component';
+import { AddEditComponent } from './add-edit.component';
 
 @NgModule({
   imports: [CommonModule, ReactiveFormsModule, DevicesRoutingModule],
-  declarations: [LayoutComponent, ListComponent],
-  //declarations: [LayoutComponent, ListComponent, AddEditComponent],
+  //declarations: [LayoutComponent, ListComponent],
+  declarations: [LayoutComponent, ListComponent, AddEditComponent],
 })
 export class DevicesModule {}

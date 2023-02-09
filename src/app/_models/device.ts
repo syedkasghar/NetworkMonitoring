@@ -1,4 +1,4 @@
-import { DeviceType } from './device';
+import { DeviceType } from './deviceType';
 
 export class Device {
   id: number;

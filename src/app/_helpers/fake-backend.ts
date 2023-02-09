@@ -10,32 +10,46 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { delay, materialize, dematerialize } from 'rxjs/operators';
 
-import { Role, DeviceType } from '../_models';
+import { Role, DeviceType, IncidentStatus } from '../_models';
 //import { DeviceType } from '../_models';
 
 // array in local storage for registered users
 const usersKey = 'network-monitoring-users';
 const devicesKey = 'network-monitoring-devices';
+const incidentsKey = 'network-monitoring-incidents';
 
 let users = JSON.parse(localStorage.getItem(usersKey)) || [
   {
     id: 1,
     title: 'Mr',
-    firstName: 'Joe',
-    lastName: 'Bloggs',
-    email: 'joe@bloggs.com',
+    firstName: 'Arsalan',
+    lastName: 'Ali',
+    email: 'arsalan.ali@gmail.com',
     role: Role.User,
-    password: 'joe123',
+    password: 'test123',
   },
 ];
 
 let devices = JSON.parse(localStorage.getItem(devicesKey)) || [
   {
     id: 1,
-    name: 'ARSALANPC',
+    name: 'ARSALAN-PC',
     ipAddress: '192.168.1.1',
     isActive: true,
     deviceType: DeviceType.Laptop,
+  },
+];
+
+let incidents = JSON.parse(localStorage.getItem(incidentsKey)) || [
+  {
+    id: 1,
+    deviceId: 1,
+    deviceName: 'ARSALAN-PC',
+    errorCodeId: 'X00052',
+    errorCode: 'device unreachable',
+    startTime: Date(),
+    endTime: new Date().setSeconds(new Date().getSeconds() + 10),
+    incidentStatus: IncidentStatus.Resolved,
   },
 ];
 
@@ -64,6 +78,25 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         case url.endsWith('/devices') && method === 'GET':
           return getDevices();
+        case url.match(/\/devices\/\d+$/) && method === 'GET':
+          return getDeviceById();
+        case url.endsWith('/devices') && method === 'POST':
+          return createDevice();
+        case url.match(/\/devices\/\d+$/) && method === 'PUT':
+          return updateDevice();
+        case url.match(/\/devices\/\d+$/) && method === 'DELETE':
+          return deleteDevice();
+
+        case url.endsWith('/incidents') && method === 'GET':
+          return getIncidents();
+        case url.match(/\/incidents\/\d+$/) && method === 'GET':
+          return getIncidentById();
+        case url.endsWith('/incidents') && method === 'POST':
+          return createIncident();
+        case url.match(/\/incidents\/\d+$/) && method === 'PUT':
+          return updateIncident();
+        case url.match(/\/incidents\/\d+$/) && method === 'DELETE':
+          return deleteIncident();
 
         default:
           // pass through any requests not handled above
@@ -123,7 +156,89 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     /***********    Devices ********************* */
 
     function getDevices() {
-      return ok(devices.map((x) => basicDetails(x)));
+      //console.log('Hello world!');
+      return ok(devices.map((x) => basicDeviceDetails(x)));
+    }
+
+    function getDeviceById() {
+      const device = devices.find((x) => x.id === idFromUrl());
+      console.log(device);
+      return ok(basicDeviceDetails(device));
+    }
+
+    function createDevice() {
+      const device = body;
+
+      if (users.find((x) => x.name === device.name)) {
+        return error(`Device with the name ${device.name} already exists`);
+      }
+
+      // assign device id and a few other properties then save
+      device.id = newDeviceId();
+      //delete user.confirmPassword;
+      devices.push(device);
+      localStorage.setItem(devicesKey, JSON.stringify(devices));
+
+      return ok();
+    }
+
+    function updateDevice() {
+      let params = body;
+      let device = devices.find((x) => x.id === idFromUrl());
+
+      // update and save user
+      Object.assign(device, params);
+      localStorage.setItem(devicesKey, JSON.stringify(devices));
+
+      return ok();
+    }
+
+    function deleteDevice() {
+      devices = devices.filter((x) => x.id !== idFromUrl());
+      localStorage.setItem(devicesKey, JSON.stringify(devices));
+      return ok();
+    }
+
+    /***********    Incidents ********************* */
+
+    function getIncidents() {
+      //console.log('Hello world!');
+      return ok(incidents.map((x) => basicIncidentDetails(x)));
+    }
+
+    function getIncidentById() {
+      const incident = incidents.find((x) => x.id === idFromUrl());
+      console.log(incident);
+      return ok(basicDeviceDetails(incident));
+    }
+
+    function createIncident() {
+      const incident = body;
+
+      // assign device id and a few other properties then save
+      incident.id = newIncidentId();
+      //delete user.confirmPassword;
+      incidents.push(incident);
+      localStorage.setItem(incidentsKey, JSON.stringify(incidents));
+
+      return ok();
+    }
+
+    function updateIncident() {
+      let params = body;
+      let incident = incidents.find((x) => x.id === idFromUrl());
+
+      // update and save user
+      Object.assign(incident, params);
+      localStorage.setItem(incidentsKey, JSON.stringify(incidents));
+
+      return ok();
+    }
+
+    function deleteIncident() {
+      incidents = incidents.filter((x) => x.id !== idFromUrl());
+      localStorage.setItem(incidentsKey, JSON.stringify(incidents));
+      return ok();
     }
 
     // helper functions
@@ -140,6 +255,34 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       ); // call materialize and dematerialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648);
     }
 
+    function basicDeviceDetails(device) {
+      console.log(device);
+      const { id, name, ipAddress, isActive, deviceType } = device;
+      return { id, name, ipAddress, isActive, deviceType };
+    }
+
+    function basicIncidentDetails(incident) {
+      console.log(incident);
+      const {
+        id,
+        deviceId,
+        deviceName,
+        errorCodeId,
+        startTime,
+        endTime,
+        incidentStatus,
+      } = incident;
+      return {
+        id,
+        deviceId,
+        deviceName,
+        errorCodeId,
+        startTime,
+        endTime,
+        incidentStatus,
+      };
+    }
+
     function basicDetails(user) {
       const { id, title, firstName, lastName, email, role } = user;
       return { id, title, firstName, lastName, email, role };
@@ -152,6 +295,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     function newUserId() {
       return users.length ? Math.max(...users.map((x) => x.id)) + 1 : 1;
+    }
+
+    function newDeviceId() {
+      return devices.length ? Math.max(...devices.map((x) => x.id)) + 1 : 1;
+    }
+
+    function newIncidentId() {
+      return incidents.length ? Math.max(...incidents.map((x) => x.id)) + 1 : 1;
     }
   }
 }

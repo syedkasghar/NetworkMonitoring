@@ -16,7 +16,7 @@ export class ListComponent implements OnInit {
       .subscribe((devices) => (this.devices = devices));
   }
 
-  deleteUser(id: string) {
+  deleteDevice(id: string) {
     const device = this.devices.find((x) => x.id === id);
     device.isDeleting = true;
     this.deviceService
