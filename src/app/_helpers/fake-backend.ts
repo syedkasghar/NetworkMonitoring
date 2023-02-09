@@ -41,6 +41,7 @@ let devices = JSON.parse(localStorage.getItem(devicesKey)) || [
 ];
 
 let startDate = new Date();
+startDate.setMinutes(startDate.getMinutes() + 30);
 
 let incidents = JSON.parse(localStorage.getItem(incidentsKey)) || [
   {
@@ -49,10 +50,8 @@ let incidents = JSON.parse(localStorage.getItem(incidentsKey)) || [
     deviceName: 'ARSALAN-PC',
     errorCodeId: 'X00052',
     errorCode: 'device unreachable',
-    startTime: startDate
-      .setMinutes(startDate.getMinutes() - 20)
-      .toLocaleString(),
-    endTime: startDate.setMinutes(startDate.getMinutes() - 15).toLocaleString(),
+    startTime: new Date().toLocaleString(),
+    endTime: startDate.toLocaleString(),
     incidentStatus: IncidentStatus.Resolved,
   },
 
@@ -62,10 +61,8 @@ let incidents = JSON.parse(localStorage.getItem(incidentsKey)) || [
     deviceName: 'Kamran PC',
     errorCodeId: 'X00052',
     errorCode: 'device unreachable',
-    startTime: startDate
-      .setMinutes(startDate.getMinutes() - 10)
-      .toLocaleString(),
-    endTime: startDate.setMinutes(startDate.getMinutes() - 5).toLocaleString(),
+    startTime: new Date().toLocaleString(),
+    endTime: startDate.toLocaleString(),
     incidentStatus: IncidentStatus.Unresolved,
   },
 
@@ -75,10 +72,8 @@ let incidents = JSON.parse(localStorage.getItem(incidentsKey)) || [
     deviceName: 'Kamran PC',
     errorCodeId: 'R00052',
     errorCode: 'device unstable',
-    startTime: startDate
-      .setMinutes(startDate.getMinutes() - 30)
-      .toLocaleString(),
-    endTime: startDate.setMinutes(startDate.getMinutes() - 20).toLocaleString(),
+    startTime: new Date().toLocaleString(),
+    endTime: startDate.toLocaleString(),
     incidentStatus: IncidentStatus.UnderInvestigation,
   },
 ];
