@@ -9,10 +9,13 @@ const usersModule = () =>
 const devicesModule = () =>
   import('./devices/devices.module').then((x) => x.DevicesModule);
 
+const incidentsModule = () =>
+  import('./incidents/incidents.module').then((x) => x.IncidentsModule);
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'devices', loadChildren: devicesModule },
-  //{ path: 'users', loadChildren: usersModule },
+  { path: 'incidents', loadChildren: incidentsModule },
   { path: 'users', loadChildren: usersModule },
 
   // otherwise redirect to home
