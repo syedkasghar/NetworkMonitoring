@@ -34,14 +34,16 @@ export class AddEditComponent implements OnInit {
       errorCode: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: [''],
-      status: ['', Validators.required],
+      incidentStatus: ['', Validators.required],
     });
 
     if (!this.isAddMode) {
       this.incidentService
         .getById(this.id)
         .pipe(first())
-        .subscribe((x) => this.form.patchValue(x));
+        .subscribe((x) => {
+          this.form.patchValue(x);
+        });
     }
   }
 

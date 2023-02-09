@@ -15,8 +15,8 @@ export class IncidentService {
   }
 
   getById(id: string) {
-    console.log('here');
-    return this.http.get<Incident>(`${baseUrl}/${id}`);
+    const incident = this.http.get<Incident>(`${baseUrl}/${id}`);
+    return incident;
   }
 
   create(params) {

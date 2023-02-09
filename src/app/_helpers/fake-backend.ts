@@ -40,16 +40,46 @@ let devices = JSON.parse(localStorage.getItem(devicesKey)) || [
   },
 ];
 
+let startDate = new Date();
+
 let incidents = JSON.parse(localStorage.getItem(incidentsKey)) || [
   {
     id: 1,
-    deviceId: 1,
+    deviceId: 3,
     deviceName: 'ARSALAN-PC',
     errorCodeId: 'X00052',
     errorCode: 'device unreachable',
-    startTime: Date(),
-    endTime: new Date().setSeconds(new Date().getSeconds() + 10),
+    startTime: startDate
+      .setMinutes(startDate.getMinutes() - 20)
+      .toLocaleString(),
+    endTime: startDate.setMinutes(startDate.getMinutes() - 15).toLocaleString(),
     incidentStatus: IncidentStatus.Resolved,
+  },
+
+  {
+    id: 2,
+    deviceId: 2,
+    deviceName: 'Kamran PC',
+    errorCodeId: 'X00052',
+    errorCode: 'device unreachable',
+    startTime: startDate
+      .setMinutes(startDate.getMinutes() - 10)
+      .toLocaleString(),
+    endTime: startDate.setMinutes(startDate.getMinutes() - 5).toLocaleString(),
+    incidentStatus: IncidentStatus.Unresolved,
+  },
+
+  {
+    id: 3,
+    deviceId: 2,
+    deviceName: 'Kamran PC',
+    errorCodeId: 'R00052',
+    errorCode: 'device unstable',
+    startTime: startDate
+      .setMinutes(startDate.getMinutes() - 30)
+      .toLocaleString(),
+    endTime: startDate.setMinutes(startDate.getMinutes() - 20).toLocaleString(),
+    incidentStatus: IncidentStatus.UnderInvestigation,
   },
 ];
 
@@ -209,7 +239,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     function getIncidentById() {
       const incident = incidents.find((x) => x.id === idFromUrl());
       console.log(incident);
-      return ok(basicDeviceDetails(incident));
+      return ok(basicIncidentDetails(incident));
     }
 
     function createIncident() {
@@ -268,6 +298,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         deviceId,
         deviceName,
         errorCodeId,
+        errorCode,
         startTime,
         endTime,
         incidentStatus,
@@ -277,6 +308,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         deviceId,
         deviceName,
         errorCodeId,
+        errorCode,
         startTime,
         endTime,
         incidentStatus,
